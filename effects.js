@@ -81,11 +81,15 @@
         document.body.appendChild(glow);
         var tx = innerWidth / 2, ty = innerHeight / 3, x = tx, y = ty;
         addEventListener('pointermove', function (e) { tx = e.clientX; ty = e.clientY; }, { passive: true });
-        (function loop() {
+        var running = false;
+        function loop() {
             x += (tx - x) * 0.12; y += (ty - y) * 0.12;
             glow.style.transform = 'translate3d(' + x.toFixed(1) + 'px,' + y.toFixed(1) + 'px,0)';
+            if (Math.abs(tx - x) < 0.3 && Math.abs(ty - y) < 0.3) { running = false; return; } /* idle: stop the loop */
             requestAnimationFrame(loop);
-        })();
+        }
+        addEventListener('pointermove', function () { if (!running) { running = true; requestAnimationFrame(loop); } }, { passive: true });
+        running = true; requestAnimationFrame(loop);
     }
 
     /* 5) Scroll progress bar */

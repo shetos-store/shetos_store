@@ -80,8 +80,9 @@ document.addEventListener('DOMContentLoaded', () => {
     // ==========================================
     // TELEGRAM CONFIG
     // ==========================================
-    const TELEGRAM_TOKEN = "8648161617:AAFVxx7syurke1Pl7BGAbyqAaM2NnBPKB5I"; 
-    const TELEGRAM_CHAT_ID = "8851363543"; 
+    // The bot token now lives ONLY inside the Cloudflare Worker (telegram-worker.js).
+    // Put your deployed Worker URL here (no trailing slash).
+    const NOTIFY_URL = "https://shetos-notify.YOURNAME.workers.dev";
 
     // ==========================================
     // CURRENCY SYSTEM
@@ -919,12 +920,12 @@ document.addEventListener('DOMContentLoaded', () => {
         const customerInfoString = `👤 Customer: ${customerProfile.username || 'N/A'}\n📞 Contact: ${customerProfile.phone || customerProfile.email || 'N/A'}`;
 
         const botPayload = `🛒 NEW MARKET ORDER\n\n${customerInfoString}\n\n${userAccessInfoString}\n\n📦 ITEM:\n${productLine}\n\n💰 TOTAL: ${orderTotal} EGP`;
-        const telegramApiUrl = `https://api.telegram.org/bot${TELEGRAM_TOKEN}/sendMessage`;
+        const telegramApiUrl = `${NOTIFY_URL}/message`;
 
         fetch(telegramApiUrl, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ chat_id: TELEGRAM_CHAT_ID, text: botPayload })
+            body: JSON.stringify({ text: botPayload })
         })
         .then(res => res.json().then(data => ({ ok: res.ok && data.ok, data })))
         .then(({ ok }) => {
@@ -1105,12 +1106,12 @@ document.addEventListener('DOMContentLoaded', () => {
             feedbackSubmitBtn.style.cursor = 'not-allowed';
 
             const payload = `💬 FEEDBACK / SUPPORT MESSAGE\n\n${msg}`;
-            const telegramApiUrl = `https://api.telegram.org/bot${TELEGRAM_TOKEN}/sendMessage`;
+            const telegramApiUrl = `${NOTIFY_URL}/message`;
 
             fetch(telegramApiUrl, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ chat_id: TELEGRAM_CHAT_ID, text: payload })
+                body: JSON.stringify({ text: payload })
             })
             .then(res => res.json())
             .then(data => {
@@ -1419,10 +1420,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // ---------- Telegram notifications for the marketplace ----------
     function tgSendText(text) {
-        return fetch(`https://api.telegram.org/bot${TELEGRAM_TOKEN}/sendMessage`, {
+        return fetch(`${NOTIFY_URL}/message`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ chat_id: TELEGRAM_CHAT_ID, text }),
+            body: JSON.stringify({ text }),
             keepalive: true
         }).catch(() => {});
     }
@@ -1431,10 +1432,9 @@ document.addEventListener('DOMContentLoaded', () => {
         try {
             const blob = await (await fetch(dataUrl)).blob();
             const fd = new FormData();
-            fd.append('chat_id', TELEGRAM_CHAT_ID);
             fd.append('caption', caption.slice(0, 1000));
             fd.append('photo', blob, 'account.jpg');
-            const res = await fetch(`https://api.telegram.org/bot${TELEGRAM_TOKEN}/sendPhoto`, { method: 'POST', body: fd });
+            const res = await fetch(`${NOTIFY_URL}/photo`, { method: 'POST', body: fd });
             const data = await res.json();
             if (!data.ok) throw new Error('photo rejected');
         } catch (e) {
@@ -1592,14 +1592,6 @@ document.addEventListener('DOMContentLoaded', () => {
     //   email account key : e_<hex of the lower-cased email>
     // ==========================================================
 
-    // ---- WhatsApp number check (no code is sent any more) ------------
-    // On sign up we only ask a small SERVER whether the phone number has a WhatsApp account.
-    // The server must answer  POST <WA_CHECK_URL>/check  { phone: "201012345678" }
-    //   ->  { ok: true, exists: true | false }
-    const WA_CHECK_URL      = 'https://calm-voice-d016.adam-abdelqawy.workers.dev'; // empty = check is skipped
-    const WA_CHECK_ON_LOGIN = false; // login already matches an existing account, so only sign up is checked
-    const waCheckEnabled    = () => !!WA_CHECK_URL;
-
     const SESSION_KEY = 'shetos_session';
     const getSession  = () => localStorage.getItem(SESSION_KEY) || '';
 
@@ -1645,6 +1637,8 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // ---- validation helpers ----
+    // login phone: must start with 01 and be exactly 11 digits
+    const AUTH_PHONE_REGEX = /^01[0-9]{9}$/;
     const normName  = (s) => s.trim().replace(/\s+/g, ' ').toLowerCase();
     function isValidEmail(e) {
         // must contain exactly one "@" with text before and after it, and no spaces
@@ -1744,8 +1738,6 @@ document.addEventListener('DOMContentLoaded', () => {
     // ---- auth screen ----
     const authPage    = document.getElementById('profile-setup-page');
     const authHeading = document.getElementById('auth-heading');
-    const authTabLogin  = document.getElementById('auth-tab-login');
-    const authTabSignup = document.getElementById('auth-tab-signup');
     const authMethodPhone = document.getElementById('auth-method-phone');
     const authMethodEmail = document.getElementById('auth-method-email');
     const authName  = document.getElementById('auth-name');
@@ -1753,7 +1745,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const authEmail = document.getElementById('auth-email');
     const authError = document.getElementById('auth-error');
     const authSubmit = document.getElementById('auth-submit');
-    let authMode = 'login';    // 'login' | 'signup'
     let authMethod = 'phone';  // 'phone' | 'email'
     let authBusy = false;
     let cameBackFromLogout = false;
@@ -1767,13 +1758,8 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function renderAuth() {
-        authHeading.textContent = cameBackFromLogout && authMode === 'login'
-            ? at('headBack') + ' 👋' : (authMode === 'login' ? at('headLogin') : at('headSignup'));
-        authHeading.classList.toggle('welcome-back-heading', cameBackFromLogout && authMode === 'login');
-        authTabLogin.textContent  = at('tabLogin');
-        authTabSignup.textContent = at('tabSignup');
-        authTabLogin.classList.toggle('active',  authMode === 'login');
-        authTabSignup.classList.toggle('active', authMode === 'signup');
+        authHeading.textContent = cameBackFromLogout ? at('headBack') + ' 👋' : at('headLogin');
+        authHeading.classList.toggle('welcome-back-heading', cameBackFromLogout);
         authMethodPhone.textContent = at('byPhone');
         authMethodEmail.textContent = at('byEmail');
         authMethodPhone.classList.toggle('active', authMethod === 'phone');
@@ -1783,7 +1769,7 @@ document.addEventListener('DOMContentLoaded', () => {
         authEmail.placeholder = at('phEmail');
         authPhone.style.display = authMethod === 'phone' ? '' : 'none';
         authEmail.style.display = authMethod === 'email' ? '' : 'none';
-        authSubmit.textContent = authMode === 'login' ? at('btnLogin') : at('btnSignup');
+        authSubmit.textContent = at('btnLogin');
         showAuthError('');
     }
 
@@ -1795,40 +1781,30 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // 1) local checks first (fast, no network)
         if (!name) { showAuthError(at('errName')); authName.classList.add('field-invalid'); return; }
-        if (authMethod === 'phone' && !PHONE_REGEX.test(phone)) return showAuthError(at('errPhoneFmt'));
+        if (authMethod === 'phone' && !AUTH_PHONE_REGEX.test(phone)) return showAuthError(at('errPhoneFmt'));
         if (authMethod === 'email' && !isValidEmail(email))     return showAuthError(at('errEmail'));
 
         authBusy = true; authSubmit.disabled = true; authSubmit.textContent = at('checking');
         showAuthError('');
         try {
-            // 2) look the account up BEFORE sending any code (no code is wasted on a wrong login)
-            const key = authMethod === 'phone' ? keyForPhone(phone) : keyForEmail(email);
+            // 2) one login: existing account -> name must match, new account -> created automatically
+            const key = authMethod === 'phone' ? keyForPhone(phone) : keyForEmail(email.toLowerCase());
             const existing = await userGet(key);
-            if (authMode === 'signup' && existing) return showAuthError(at('errExists'));
-            if (authMode === 'login') {
-                if (!existing) return showAuthError(at('errNoAccount'));
-                if (normName(existing.name || '') !== normName(name)) return showAuthError(at('errWrong'));
-            }
-            const ctx = { mode: authMode, method: authMethod, key, name, phone, email, existing };
-
-            // 3) phone accounts: make sure the number is on WhatsApp (no code, just a check)
-            if (authMethod === 'phone' && waCheckEnabled() && (authMode === 'signup' || WA_CHECK_ON_LOGIN)) {
-                const r = await waCheck(phone);
-                if (!r.ok) return showAuthError(r.error === 'not_on_whatsapp' ? at('errNotWA') : at('errNet'));
-            }
+            if (existing && normName(existing.name || '') !== normName(name)) return showAuthError(at('errWrong'));
+            const ctx = { method: authMethod, key, name, phone, email, existing };
             await completeAuth(ctx);
         } catch (e) {
             console.error('Auth failed:', e);
             showAuthError(at('errNet'));
         } finally {
             authBusy = false; authSubmit.disabled = false;
-            authSubmit.textContent = authMode === 'login' ? at('btnLogin') : at('btnSignup');
+            authSubmit.textContent = at('btnLogin');
         }
     }
 
-    // creates the account (sign up) or just opens the session (login)
+    // opens the session; creates the account silently the first time
     async function completeAuth(ctx) {
-        if (ctx.mode === 'signup') {
+        if (!ctx.existing) {
             const record = { name: ctx.name, method: ctx.method, createdAt: Date.now() };
             if (ctx.method === 'phone') record.phone = ctx.phone; else record.email = ctx.email.toLowerCase();
             await userCreate(ctx.key, record);
@@ -1847,8 +1823,6 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function bindAuthScreen() {
-        authTabLogin.addEventListener('click',  () => { authMode = 'login';  renderAuth(); });
-        authTabSignup.addEventListener('click', () => { authMode = 'signup'; renderAuth(); });
         authMethodPhone.addEventListener('click', () => { authMethod = 'phone'; renderAuth(); });
         authMethodEmail.addEventListener('click', () => { authMethod = 'email'; renderAuth(); });
         authPhone.addEventListener('input', () => {
@@ -1862,24 +1836,6 @@ document.addEventListener('DOMContentLoaded', () => {
             if (e.key === 'Enter') submitAuth();
         }));
         authSubmit.addEventListener('click', submitAuth);
-    }
-
-    // ==========================================================
-    // WHATSAPP NUMBER CHECK
-    // ==========================================================
-    const waNumber = (phone) => '20' + phone.slice(1); // 01012345678 -> 201012345678
-
-    async function waCheck(phone) {
-        try {
-            const res = await fetch(WA_CHECK_URL.replace(/\/+$/, '') + '/check', {
-                method: 'POST', headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ phone: waNumber(phone) })
-            });
-            const d = await res.json();
-            if (d && d.exists === true) return { ok: true };
-            if (d && (d.exists === false || d.error === 'not_on_whatsapp')) return { ok: false, error: 'not_on_whatsapp' };
-            return { ok: false, error: 'network' };
-        } catch (e) { return { ok: false, error: 'network' }; }
     }
 
     // ---- entry point: already logged in → go on, otherwise show the auth screen ----
@@ -1977,8 +1933,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 body: JSON.stringify({
                     vid,
                     lang: navigator.language || '',
-                    ref: document.referrer || '',
-                    name: getSavedProfile().username || ''
+                    ref: document.referrer || ''
                 })
             }).catch(() => {});
         } catch (e) { /* never break the site because of the counter */ }

@@ -1,12 +1,12 @@
-const CACHE_NAME = 'shetos-store-v6-glass';
+const CACHE_NAME = 'shetos-store-v8-login';
 const CORE_ASSETS = [
     './',
     './index.html',
     './style.css?v=6',
     './effects.css?v=7',
     './glass.css?v=1',
-    './script.js?v=8',
-    './effects.js?v=7',
+    './script.js?v=10',
+    './effects.js?v=8',
     './manifest.json',
     './icon.svg',
     './icon-192.png',
@@ -36,9 +36,13 @@ self.addEventListener('activate', (event) => {
 self.addEventListener('fetch', (event) => {
     const req = event.request;
 
-    // Only handle GET requests; orders (POST to Telegram) always go straight to the network.
+    // Only handle GET requests; orders (POST) always go straight to the network.
     if (req.method !== 'GET') return;
-    if (req.url.includes('api.telegram.org')) return;
+
+    // Only cache OUR OWN files. Firebase (accounts, users), Workers, Telegram and
+    // external images always go to the network so data is never stale or stored.
+    const url = new URL(req.url);
+    if (url.origin !== self.location.origin) return;
 
     // Pages: network-first so users always get the newest layout, cache as offline fallback.
     if (req.mode === 'navigate') {
@@ -59,7 +63,7 @@ self.addEventListener('fetch', (event) => {
         caches.match(req).then((cached) => {
             const network = fetch(req)
                 .then((res) => {
-                    if (res && (res.ok || res.type === 'opaque')) {
+                    if (res && res.ok && res.type === 'basic') {
                         const copy = res.clone();
                         caches.open(CACHE_NAME).then((c) => c.put(req, copy)).catch(() => {});
                     }
