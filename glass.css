@@ -1,0 +1,221 @@
+/* ==========================================================
+   SHETOS STORE - GLASS LAYER (loads after style.css + effects.css)
+   Frosted glass: blur + saturation, bright specular edge, soft depth.
+   ========================================================== */
+:root, html[data-theme="dark"]{
+  --glass-bg: rgba(255,255,255,.07);
+  --glass-bg-strong: rgba(24,24,32,.55);
+  --glass-bg-hover: rgba(255,255,255,.13);
+  --glass-border: rgba(255,255,255,.18);
+  --glass-edge: rgba(255,255,255,.45);      /* top-left specular edge */
+  --glass-edge-dim: rgba(255,255,255,.06);  /* bottom-right edge */
+  --glass-shadow: 0 12px 36px -12px rgba(0,0,0,.65);
+  --glass-light: rgba(255,255,255,.16);     /* cursor light */
+  --glass-blur: 22px;
+  --wallpaper-opacity: .8;
+  /* every old "solid" surface becomes glass, even ones not restyled below */
+  --bg-surface: rgba(255,255,255,.07);
+  --bg-surface-alt: rgba(255,255,255,.05);
+  --bg-top-bar: rgba(16,16,22,.38);
+  --border-soft: rgba(255,255,255,.14);
+  --border-input: rgba(255,255,255,.2);
+}
+html[data-theme="light"]{
+  --glass-bg: rgba(255,255,255,.42);
+  --glass-bg-strong: rgba(255,255,255,.62);
+  --glass-bg-hover: rgba(255,255,255,.62);
+  --glass-border: rgba(255,255,255,.75);
+  --glass-edge: rgba(255,255,255,.95);
+  --glass-edge-dim: rgba(255,255,255,.3);
+  --glass-shadow: 0 12px 34px -12px rgba(40,50,90,.3);
+  --glass-light: rgba(255,255,255,.7);
+  --wallpaper-opacity: .6;
+  --bg-surface: rgba(255,255,255,.45);
+  --bg-surface-alt: rgba(255,255,255,.35);
+  --bg-top-bar: rgba(255,255,255,.5);
+  --border-soft: rgba(255,255,255,.7);
+  --border-input: rgba(120,125,150,.28);
+}
+@media (max-width:600px){:root{--glass-blur:14px}}
+
+/* ---------- backdrop: richer colour so the glass has something to bend ---------- */
+.bg-blob{filter:blur(60px)}
+.fx-cursor{z-index:0;background:radial-gradient(circle,rgba(255,138,0,.28),rgba(0,162,255,.1) 45%,transparent 68%)}
+
+/* ---------- the glass recipe ---------- */
+.top-bar,.modal-box,.plain-modal-box,.neon-border-box,.profile-setup-box,
+.hub-box,.setting-big-rect-btn,.ff-type-rect,.currency-choice-btn,.language-choice-btn,
+.recharge-item,.profile-display-view,.profile-edit-view,.feedback-form-box,
+.top-search-wrap,.top-settings-icon-btn,.theme-toggle-btn,.scroll-arrow-btn,
+.auth-tab,.auth-method,.verify-digit,.game-input,.profile-setup-field,
+.profile-row-value-input,.feedback-input-rectangle,.account-card-meta,.accounts-status{
+  -webkit-backdrop-filter:blur(var(--glass-blur)) saturate(1.7);
+  backdrop-filter:blur(var(--glass-blur)) saturate(1.7);
+}
+.top-bar,.modal-box,.plain-modal-box,.neon-border-box,.profile-setup-box,
+.hub-box,.setting-big-rect-btn,.ff-type-rect,.currency-choice-btn,.language-choice-btn,
+.recharge-item,.profile-display-view,.profile-edit-view,.feedback-form-box,
+.top-search-wrap,.top-settings-icon-btn,.theme-toggle-btn,.scroll-arrow-btn,
+.auth-tab,.auth-method{
+  background:radial-gradient(240px circle at var(--gx,-300px) var(--gy,-300px),var(--glass-light),transparent 70%),var(--glass-bg);
+  border:1px solid var(--glass-border);
+  box-shadow:inset 1px 1px 0 var(--glass-edge),inset -1px -1px 0 var(--glass-edge-dim),var(--glass-shadow);
+}
+/* big floating panels = stronger, thicker glass */
+.modal-box,.plain-modal-box,.neon-border-box,.profile-setup-box{
+  background:linear-gradient(145deg,rgba(255,255,255,.16),rgba(255,255,255,.03) 55%),var(--glass-bg-strong);
+  -webkit-backdrop-filter:blur(34px) saturate(1.9);backdrop-filter:blur(34px) saturate(1.9);
+  border-radius:26px;
+  box-shadow:inset 1px 1px 0 var(--glass-edge),inset -1px -1px 0 var(--glass-edge-dim),0 30px 70px -20px rgba(0,0,0,.7);
+}
+html[data-theme="light"] .modal-box,html[data-theme="light"] .plain-modal-box,
+html[data-theme="light"] .neon-border-box,html[data-theme="light"] .profile-setup-box{
+  box-shadow:inset 1px 1px 0 var(--glass-edge),inset -1px -1px 0 var(--glass-edge-dim),0 30px 70px -24px rgba(40,50,90,.35);
+}
+.top-bar{border-bottom:1px solid var(--glass-border);box-shadow:inset 0 1px 0 var(--glass-edge),0 10px 30px -18px rgba(0,0,0,.6);border-top:0;border-left:0;border-right:0;border-radius:0}
+
+/* inputs: sunken glass */
+.game-input,.profile-setup-field,.profile-row-value-input,.feedback-input-rectangle,.verify-digit{
+  background:rgba(0,0,0,.22);border:1px solid var(--glass-border);
+  box-shadow:inset 0 2px 6px rgba(0,0,0,.25),inset 0 -1px 0 var(--glass-edge-dim);
+}
+html[data-theme="light"] .game-input,html[data-theme="light"] .profile-setup-field,
+html[data-theme="light"] .profile-row-value-input,html[data-theme="light"] .feedback-input-rectangle,
+html[data-theme="light"] .verify-digit{background:rgba(255,255,255,.5);box-shadow:inset 0 2px 5px rgba(40,50,90,.12)}
+.top-search-wrap{overflow:hidden}
+.game-input::placeholder,.profile-setup-field::placeholder,.feedback-input-rectangle::placeholder,.top-search-rect::placeholder{color:var(--text-muted);opacity:.8}
+.game-input:focus,.profile-setup-field:focus,.profile-row-value-input:focus,.feedback-input-rectangle:focus,.verify-digit:focus{
+  border-color:rgba(255,138,0,.85);background:rgba(255,255,255,.1);
+  box-shadow:0 0 0 4px rgba(255,102,0,.16),0 0 24px rgba(255,102,0,.3),inset 0 1px 0 var(--glass-edge)}
+.profile-setup-field.field-invalid{border-color:#ff5a5a}
+.verify-digit.filled{border-color:rgba(37,211,102,.8);background:rgba(37,211,102,.14)}
+
+/* hover / active = glass gets brighter and lifts a tint of its own colour */
+.setting-big-rect-btn:hover,.ff-type-rect:hover,.currency-choice-btn:hover,.language-choice-btn:hover,
+.top-settings-icon-btn:hover,.theme-toggle-btn:hover,.scroll-arrow-btn:hover,.recharge-item:hover{
+  background:radial-gradient(240px circle at var(--gx,50%) var(--gy,50%),var(--glass-light),transparent 70%),var(--glass-bg-hover);
+  border-color:rgba(255,160,70,.75);
+  box-shadow:inset 1px 1px 0 var(--glass-edge),inset -1px -1px 0 var(--glass-edge-dim),0 14px 34px -12px rgba(255,102,0,.55);
+}
+.currency-choice-btn.currency-active,.language-choice-btn.lang-active,.recharge-item.selected-product-active{
+  background:linear-gradient(135deg,rgba(255,102,0,.34),rgba(255,102,0,.1)),var(--glass-bg)!important;
+  border-color:rgba(255,150,60,.9)!important;
+  box-shadow:inset 1px 1px 0 var(--glass-edge),0 0 26px rgba(255,102,0,.35)!important}
+.recharge-item.membership{border-color:rgba(255,204,0,.6);background:linear-gradient(135deg,rgba(255,204,0,.16),rgba(255,204,0,.03)),var(--glass-bg)}
+.auth-tab.active{background:linear-gradient(135deg,rgba(255,138,0,.85),rgba(255,90,0,.7));border-color:rgba(255,255,255,.4);color:#fff}
+.auth-method.active{background:linear-gradient(135deg,rgba(0,162,255,.3),rgba(0,162,255,.08)),var(--glass-bg);border-color:rgba(0,162,255,.8)}
+.auth-tab:hover:not(.active),.auth-method:hover:not(.active){background:var(--glass-bg-hover)}
+
+/* inner tint washes from style.css were opaque-ish; soften them */
+.setting-big-rect-btn::before,.ff-type-rect::before{opacity:.6}
+.recharge-item::before{mix-blend-mode:normal}
+
+/* ---------- hub boxes: tinted glass slabs ---------- */
+.hub-box{
+  border:1px solid rgba(var(--rgb),.55);
+  background:radial-gradient(240px circle at var(--mx,50%) var(--my,0%),rgba(255,255,255,.18),transparent 70%),
+    linear-gradient(160deg,rgba(var(--rgb),.26),rgba(var(--rgb),.04) 70%),var(--glass-bg);
+  box-shadow:inset 1px 1px 0 var(--glass-edge),inset -1px -1px 0 var(--glass-edge-dim),0 18px 40px -16px rgba(var(--rgb),.55);
+}
+.hub-box:hover{border-color:rgba(var(--rgb),.95)}
+
+/* ---------- game cards: artwork with a frosted label + glass badge ---------- */
+.game-card{
+  border:1.5px solid var(--glass-border);
+  box-shadow:inset 1px 1px 0 var(--glass-edge),var(--glass-shadow);
+  transform-style:flat;
+}
+.game-label{
+  background:linear-gradient(to top,rgba(0,0,0,.35),rgba(255,255,255,.06));
+  -webkit-backdrop-filter:blur(16px) saturate(1.6);backdrop-filter:blur(16px) saturate(1.6);
+  border-top:1px solid rgba(255,255,255,.3);color:#fff;
+}
+.icon-badge{
+  background:rgba(255,255,255,.14);
+  -webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px);
+  border:1px solid rgba(255,255,255,.5);
+  box-shadow:inset 1px 1px 0 rgba(255,255,255,.55),0 8px 22px rgba(0,0,0,.45);
+  padding:3px;
+}
+.icon-badge img{border-radius:11px}
+
+/* ---------- account cards ---------- */
+.account-card{border:1.5px solid var(--glass-border);box-shadow:inset 1px 1px 0 var(--glass-edge),var(--glass-shadow);transform-style:flat}
+.account-card-shade{background:linear-gradient(to top,rgba(8,8,14,.7),rgba(8,8,14,.08) 55%,transparent)}
+.account-card-mine{background:rgba(255,102,0,.75);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);border:1px solid rgba(255,255,255,.4)}
+.accounts-status{background:var(--glass-bg);border-radius:16px;padding:14px;border:1px solid var(--glass-border)}
+
+/* ---------- glare: plain light, no blend mode (overlay breaks on glass) ---------- */
+.game-card::after,.hub-box::after,.account-card::after{
+  mix-blend-mode:normal;
+  background:radial-gradient(circle at var(--mx,50%) var(--my,50%),rgba(255,255,255,.26),transparent 55%)}
+html[data-theme="light"] .game-card::after,html[data-theme="light"] .hub-box::after,html[data-theme="light"] .account-card::after{
+  background:radial-gradient(circle at var(--mx,50%) var(--my,50%),rgba(255,255,255,.5),transparent 55%)}
+.game-card:hover,.hub-box:hover,.account-card:hover{
+  box-shadow:inset 1px 1px 0 var(--glass-edge),0 22px 44px -14px rgba(var(--rgb),.65),0 0 0 1px rgba(var(--rgb),.55)}
+
+/* ---------- buttons: glossy glass ---------- */
+.blue-btn{
+  background:linear-gradient(180deg,rgba(255,255,255,.35),rgba(255,255,255,0) 50%),linear-gradient(135deg,rgba(0,150,255,.85),rgba(0,95,190,.8));
+  border:1px solid rgba(255,255,255,.45);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.6),0 10px 26px -8px rgba(0,122,204,.65);
+  -webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px)}
+.blue-btn:hover:not(:disabled){background:linear-gradient(180deg,rgba(255,255,255,.45),rgba(255,255,255,.02) 50%),linear-gradient(135deg,rgba(20,170,255,.95),rgba(0,105,205,.85))}
+.profile-setup-enter-btn.ready,.profile-save-btn,.feedback-submit-button{
+  background:linear-gradient(180deg,rgba(255,255,255,.35),rgba(255,255,255,0) 50%),linear-gradient(135deg,rgba(255,138,0,.9),rgba(255,80,0,.8));
+  border:1px solid rgba(255,255,255,.45);color:#fff;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.6),0 10px 26px -8px rgba(255,102,0,.65)}
+.confirm-btn{
+  background:linear-gradient(180deg,rgba(255,255,255,.3),rgba(255,255,255,0) 50%),linear-gradient(135deg,rgba(255,138,0,.9),rgba(255,80,0,.8));
+  border:1px solid rgba(255,255,255,.45);color:#fff}
+.confirm-btn:disabled{background:var(--glass-bg);color:var(--text-muted);border-color:var(--glass-border);filter:none}
+.profile-edit-toggle-btn,.profile-logout-btn,.acc-delete-btn,.acc-phone-link,.verify-link-btn{
+  -webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px);box-shadow:inset 1px 1px 0 var(--glass-edge-dim)}
+.profile-edit-toggle-btn{background:rgba(255,138,0,.1)}
+.profile-logout-btn,.acc-delete-btn{background:rgba(255,77,77,.1)}
+.acc-phone-link{background:rgba(37,211,102,.1)}
+.support-phone-row{
+  background:linear-gradient(135deg,rgba(37,211,102,.22),rgba(37,211,102,.05)),var(--glass-bg);
+  -webkit-backdrop-filter:blur(var(--glass-blur));backdrop-filter:blur(var(--glass-blur));
+  border:1px solid rgba(37,211,102,.6);color:var(--text-main);
+  box-shadow:inset 1px 1px 0 var(--glass-edge),0 10px 26px -10px rgba(37,211,102,.5)}
+.support-phone-row:hover{background:rgba(37,211,102,.8);color:#04210f}
+.feedback-cooperation-box{-webkit-backdrop-filter:blur(16px);backdrop-filter:blur(16px)}
+
+/* ---------- overlays & full-screen pages ---------- */
+.modal-overlay{background:rgba(8,8,14,.28);-webkit-backdrop-filter:blur(14px) saturate(1.3);backdrop-filter:blur(14px) saturate(1.3)}
+html[data-theme="light"] .modal-overlay{background:rgba(220,225,240,.35)}
+.sub-page,#profile-setup-page,.verify-success{
+  background:rgba(8,8,14,.35);
+  -webkit-backdrop-filter:blur(26px) saturate(1.5);backdrop-filter:blur(26px) saturate(1.5)}
+html[data-theme="light"] .sub-page,html[data-theme="light"] #profile-setup-page,html[data-theme="light"] .verify-success{background:rgba(240,243,252,.5)}
+.sell-thumb,.acc-thumb{-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px)}
+.sell-thumb,.acc-gallery{border:1px solid var(--glass-border)}
+.sell-thumb-remove,.acc-nav,.acc-photo-counter{background:rgba(20,20,28,.45);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);border:1px solid rgba(255,255,255,.3)}
+.demo-toast{background:var(--glass-bg-strong);-webkit-backdrop-filter:blur(24px) saturate(1.8);backdrop-filter:blur(24px) saturate(1.8);border:1px solid var(--glass-border);box-shadow:inset 1px 1px 0 var(--glass-edge),var(--glass-shadow)}
+.done-status-block{background:linear-gradient(135deg,rgba(0,204,102,.85),rgba(0,160,80,.75));border:1px solid rgba(255,255,255,.4);box-shadow:inset 0 1px 0 rgba(255,255,255,.5),0 12px 30px -10px rgba(0,204,102,.6);-webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px)}
+
+/* ---------- effects.css fixes ---------- */
+.fx-ripple{background:rgba(255,255,255,.3);mix-blend-mode:normal}
+html.fx-theme *{transition-property:background-color,color,border-color!important;transition-duration:.45s!important}
+.top-bar::after{opacity:.7}
+.selection-title{text-shadow:none;filter:drop-shadow(0 4px 18px rgba(255,102,0,.35))}
+.scroll-arrow-btn{box-shadow:inset 1px 1px 0 var(--glass-edge),0 6px 18px -6px rgba(255,102,0,.5)}
+.scroll-arrow-btn:hover{background:rgba(255,102,0,.85);color:#fff}
+
+/* cursor-follow light turns off on touch; keep touch phones lighter */
+@media (hover:none),(pointer:coarse){
+  .modal-box,.plain-modal-box,.profile-setup-box{-webkit-backdrop-filter:blur(22px) saturate(1.6);backdrop-filter:blur(22px) saturate(1.6)}
+  .recharge-item,.setting-big-rect-btn,.currency-choice-btn,.language-choice-btn,.ff-type-rect,.top-search-wrap{-webkit-backdrop-filter:none;backdrop-filter:none}
+}
+
+/* ---------- fallbacks ---------- */
+@supports not ((backdrop-filter:blur(1px)) or (-webkit-backdrop-filter:blur(1px))){
+  :root,html[data-theme="dark"]{--glass-bg:rgba(30,30,40,.9);--glass-bg-strong:rgba(22,22,30,.96);--glass-bg-hover:rgba(45,45,58,.95)}
+  html[data-theme="light"]{--glass-bg:rgba(255,255,255,.92);--glass-bg-strong:rgba(255,255,255,.97);--glass-bg-hover:#fff}
+  .sub-page,#profile-setup-page,.modal-overlay{background:var(--bg-page)}
+}
+@media (prefers-reduced-transparency:reduce){
+  :root,html[data-theme="dark"]{--glass-bg:rgba(30,30,40,.92);--glass-bg-strong:rgba(22,22,30,.97)}
+  html[data-theme="light"]{--glass-bg:rgba(255,255,255,.94);--glass-bg-strong:#fff}
+}

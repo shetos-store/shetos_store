@@ -1,0 +1,496 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, interactive-widget=resizes-content">
+    <meta name="theme-color" content="#0a0a0a">
+    <meta name="color-scheme" content="dark">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Shetos Store">
+    <meta name="description" content="Shetos Store - fast and reliable game top-ups for Free Fire, PUBG, Call of Duty, FIFA, PES and Blood Strike.">
+    <title>Shetos Store</title>
+    <link rel="icon" type="image/svg+xml" href="icon.svg">
+    <link rel="apple-touch-icon" href="icon-192.png">
+    <link rel="manifest" href="manifest.json">
+    <link rel="stylesheet" href="style.css?v=6">
+    <link rel="stylesheet" href="effects.css?v=7">
+    <link rel="stylesheet" href="glass.css?v=1">
+    <script>
+        /* Applied before first paint so there's no light/dark flash on load */
+        (function () {
+            var saved = localStorage.getItem('shetos_theme');
+            var theme = saved || 'dark';
+            document.documentElement.setAttribute('data-theme', theme);
+        })();
+    </script>
+</head>
+<body>
+
+    <!-- Animated background wallpaper: fixed behind everything, purely decorative -->
+    <div class="app-bg-wallpaper" aria-hidden="true">
+        <span class="bg-blob bg-blob-1"></span>
+        <span class="bg-blob bg-blob-2"></span>
+        <span class="bg-blob bg-blob-3"></span>
+    </div>
+
+    <!-- =====================================================
+         PROFILE SETUP SCREEN (STEP 1)
+         ===================================================== -->
+    <div id="profile-setup-page">
+        <div class="profile-setup-box auth-box">
+            <h1 id="auth-heading" class="profile-setup-heading">Login to your account</h1>
+
+            <div id="auth-form">
+            <!-- Login / Sign up -->
+            <div class="auth-tabs" role="tablist">
+                <button type="button" id="auth-tab-login" class="auth-tab active" role="tab">Login</button>
+                <button type="button" id="auth-tab-signup" class="auth-tab" role="tab">Sign up</button>
+            </div>
+
+            <!-- Way: phone or email -->
+            <div class="auth-methods">
+                <button type="button" id="auth-method-phone" class="auth-method active">📱 Name + Phone</button>
+                <button type="button" id="auth-method-email" class="auth-method">✉️ Name + Email</button>
+            </div>
+
+            <input type="text" id="auth-name" class="profile-setup-field" placeholder="Enter your name" maxlength="30" autocomplete="off">
+            <input type="tel" id="auth-phone" class="profile-setup-field" placeholder="Phone number (01xxxxxxxxx)" maxlength="11" autocomplete="off" inputmode="numeric">
+            <input type="text" id="auth-email" class="profile-setup-field" placeholder="Email" maxlength="80" autocomplete="off" inputmode="email" autocapitalize="off" style="display:none;">
+            <span id="auth-error" class="profile-setup-error"></span>
+
+            <div class="profile-setup-btn-row">
+                <button type="button" id="auth-submit" class="profile-setup-enter-btn ready">Login</button>
+            </div>
+            </div>
+
+        </div>
+    </div>
+
+    <div id="animation-container" style="display:none;">
+        <div class="intro-energy-sphere"></div>
+         <h1 class="brand-text">SHETOS STORE    <hr class="about-divider"> </h1>
+    </div>
+
+    <section id="store-page" class="page active">
+
+        <div class="top-bar">
+            <div class="top-search-wrap">
+                <span class="top-search-icon">🔍</span>
+                <input type="text" id="top-search-input" class="top-search-rect" placeholder="Search a game...">
+            </div>
+            <button id="theme-toggle-btn" class="theme-toggle-btn" aria-label="Toggle light and dark theme" title="Toggle theme">
+                <span class="theme-toggle-icon theme-toggle-icon-sun">☀️</span>
+                <span class="theme-toggle-icon theme-toggle-icon-moon">🌙</span>
+            </button>
+            <button id="top-settings-btn" class="top-settings-icon-btn" aria-label="Settings">⚙️</button>
+        </div>
+
+        <!-- ===== HUB: 2 large boxes (shown right after the intro animation) ===== -->
+        <div id="hub-section" class="store-container hub-section">
+            <h2 class="selection-title" data-i18n="hubTitle">WHAT DO YOU NEED?</h2>
+            <div class="hub-grid">
+                <button type="button" id="hub-games-box" class="hub-box hub-box-games">
+                    <span class="hub-box-icon">🎮</span>
+                    <span class="hub-box-title" data-i18n="hubGames">GAMES CHARGE</span>
+                    <span class="hub-box-sub" data-i18n="hubGamesSub">Game cards &amp; top-ups</span>
+                </button>
+                <button type="button" id="hub-accounts-box" class="hub-box hub-box-accounts">
+                    <span class="hub-box-icon">🧾</span>
+                    <span class="hub-box-title" data-i18n="hubAccounts">SELLING ACCOUNTS</span>
+                    <span class="hub-box-sub" data-i18n="hubAccountsSub">Buy &amp; sell game accounts</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- ===== ACCOUNTS MARKET (list of accounts for sale) ===== -->
+        <div id="accounts-section" class="store-container accounts-section" style="display:none;">
+            <button type="button" class="back-btn hub-back-btn" data-hub-back>← <span data-i18n="back">Back</span></button>
+            <h2 class="selection-title" data-i18n="hubAccounts">SELLING ACCOUNTS</h2>
+            <button type="button" id="open-sell-page-btn" class="blue-btn sell-new-btn">➕ <span data-i18n="sellMyAccount">Sell your account</span></button>
+            <div id="accounts-status" class="accounts-status" style="display:none;"></div>
+            <div id="accounts-grid" class="accounts-grid"></div>
+        </div>
+
+        <div id="home-content-section" class="store-container" style="display:none;">
+            <button type="button" class="back-btn hub-back-btn" data-hub-back>← <span data-i18n="back">Back</span></button>
+            <h2 class="selection-title" data-i18n="chooseGame">CHOOSE YOUR GAME</h2>
+            <div class="game-grid-wrapper">
+                <button type="button" id="game-scroll-left" class="scroll-arrow-btn scroll-arrow-left" aria-label="Scroll left">&#10094;</button>
+                <div class="game-grid" id="game-grid-scroll">
+                <div class="game-card ff-card" data-game-search-title="free fire">
+                    <div class="card-bg ff-bg"></div>
+                    <div class="icon-badge">
+                        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRajrChmCmo3a8iH0c_xnQfL7J5BWAbUg9X2A&s" onerror="this.src='https://placehold.co/60x60/ff6600/white?text=FF'" alt="Free Fire Icon">
+                    </div>
+                    <span class="game-label">FREE FIRE</span>
+                </div>
+                <div class="game-card pubg-card" data-game-search-title="pubg mobile">
+                    <div class="card-bg pubg-bg"></div>
+                    <div class="icon-badge">
+                        <img src="https://www.pubgmobile.com/common/images/icon_logo.jpg" onerror="this.src='https://placehold.co/60x60/00a2ff/white?text=PUBG'" alt="PUBG Mobile Icon">
+                    </div>
+                    <span class="game-label">PUBG MOBILE</span>
+                </div>
+                <div class="game-card cod-card" data-game-search-title="call of duty">
+                    <div class="card-bg cod-bg"></div>
+                    <div class="icon-badge">
+                        <img src="https://static.wikia.nocookie.net/callofduty/images/3/31/CODMobile_App_Icon_Global_2024_Season10_CODM.png/revision/latest/scale-to-width-down/250?cb=20241105161610" onerror="this.src='https://placehold.co/60x60/e5c158/black?text=COD'" alt="Call Of Duty Icon">
+                    </div>
+                    <span class="game-label">CALL OF DUTY</span>
+                </div>
+                <div class="game-card fifa-card" data-game-search-title="fifa fc mobile">
+                    <div class="card-bg fifa-bg"></div>
+                    <div class="icon-badge">
+                        <img src="https://cdn-www.bluestacks.com/bs-images/70042468c0d43639228178f9e61aec7f.png" onerror="this.src='https://placehold.co/60x60/00ffcc/000000?text=FIFA'" alt="FIFA Icon">
+                    </div>
+                    <span class="game-label">FIFA MOBILE</span>
+                </div>
+                <div class="game-card pes-card" data-game-search-title="pes efootball mobile">
+                    <div class="card-bg pes-bg"></div>
+                    <div class="icon-badge">
+                        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRZpoS3mTLg6D0FmVONWrpEA46mYTEd8QIICg&s" alt="PES Icon">
+                    </div>
+                    <span class="game-label">PES MOBILE</span>
+                </div>
+                <div class="game-card bs-card" data-game-search-title="blood strike">
+                    <div class="card-bg bs-bg"></div>
+                    <div class="icon-badge">
+                        <img src="https://www.blood-strike.com/m/gw/20230721092756/data/share.jpg" onerror="this.src='https://placehold.co/60x60/ff3333/white?text=BS'" alt="Blood Strike Icon">
+                    </div>
+                    <span class="game-label">BLOOD STRIKE</span>
+                </div>
+                </div>
+                <button type="button" id="game-scroll-right" class="scroll-arrow-btn scroll-arrow-right" aria-label="Scroll right">&#10095;</button>
+            </div>
+            <p id="no-games-found" class="no-games-found-msg" style="display:none;">No games found</p>
+        </div>
+
+    </section>
+
+    <!-- =====================================================
+         SETTINGS MODAL (restructured)
+         ===================================================== -->
+    <div id="settings-modal" class="modal-overlay">
+        <div class="modal-box setting-container">
+            <button id="close-settings-modal" class="back-btn">← Back</button>
+            <h2 class="about-main-title" style="margin-bottom:28px;">⚙️ <span data-i18n="settingsTitle">Settings</span></h2>
+
+            <!-- Profile Section: view, edit NAME only, logout -->
+            <div class="profile-section">
+                <div id="profile-display-view" class="profile-display-view">
+                    <div class="profile-display-line"><span class="profile-row-icon">👤</span><span id="profile-username-display">-</span></div>
+                    <div class="profile-display-line"><span id="profile-contact-icon" class="profile-row-icon">📱</span><span id="profile-phone-display">-</span></div>
+                    <div class="profile-actions-row">
+                        <button id="profile-edit-toggle-btn" class="profile-edit-toggle-btn">✏️ <span data-i18n="editName">Edit name</span></button>
+                        <button id="profile-logout-btn" class="profile-logout-btn">🚪 <span data-i18n="logout">Logout</span></button>
+                    </div>
+                </div>
+                <div id="profile-edit-view" class="profile-edit-view" style="display:none;">
+                    <input type="text" id="profile-username-field" class="profile-row-value-input" maxlength="30" placeholder="Name">
+                    <span id="profile-edit-error" class="profile-setup-error"></span>
+                    <button id="profile-save-btn" class="profile-save-btn" data-i18n="save">Save</button>
+                </div>
+                <span id="profile-save-status" class="profile-save-status"></span>
+            </div>
+
+            <!-- Feedback Button -->
+            <button id="open-feedback-modal-btn" class="setting-big-rect-btn">
+                <span class="setting-btn-icon">💬</span>
+                <div class="setting-btn-text">
+                    <span class="setting-btn-title">FEEDBACK</span>
+                    <span class="setting-btn-sub">Tell us what you think</span>
+                </div>
+                <span class="setting-btn-arrow">›</span>
+            </button>
+
+            <!-- Contact Us Button -->
+            <button id="open-contactus-modal-btn" class="setting-big-rect-btn">
+                <span class="setting-btn-icon">📞</span>
+                <div class="setting-btn-text">
+                    <span class="setting-btn-title">CONTACT US</span>
+                    <span class="setting-btn-sub">Reach us on WhatsApp</span>
+                </div>
+                <span class="setting-btn-arrow">›</span>
+            </button>
+
+            <!-- Big Currency Button -->
+            <button id="open-currency-modal-btn" class="setting-big-rect-btn">
+                <span class="setting-btn-icon">💱</span>
+                <div class="setting-btn-text">
+                    <span class="setting-btn-title" data-i18n="changeCurrency">CHANGE CURRENCY</span>
+                    <span class="setting-btn-sub" id="current-currency-label">Current: Egyptian Pound (EGP)</span>
+                </div>
+                <span class="setting-btn-arrow">›</span>
+            </button>
+
+            <!-- Big Language Button -->
+            <button id="open-language-modal-btn" class="setting-big-rect-btn">
+                <span class="setting-btn-icon">🌐</span>
+                <div class="setting-btn-text">
+                    <span class="setting-btn-title" data-i18n="changeLanguage">CHANGE LANGUAGE</span>
+                    <span class="setting-btn-sub" id="current-language-label">Current: Default</span>
+                </div>
+                <span class="setting-btn-arrow">›</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- =====================================================
+         FEEDBACK MODAL (moved out of "support")
+         ===================================================== -->
+    <div id="feedback-modal" class="modal-overlay">
+        <div class="modal-box plain-modal-box">
+            <button id="close-feedback-modal" class="back-btn">← Back</button>
+            <h2 class="about-main-title" style="margin-bottom:20px;">💬 Feedback</h2>
+            <div id="feedback-input-box" class="feedback-form-box">
+                <span class="feedback-small-text">اخبرنا ما رايك في موقعنا و اخبرنا تعديلاتك او مشاكل الموقع</span>
+                <textarea id="feedback-textarea-field" class="feedback-input-rectangle" placeholder="اكتب هنا... write here..."></textarea>
+                <button id="feedback-submit-btn" class="feedback-submit-button">SUBMIT</button>
+            </div>
+            <div id="feedback-thanks-box" class="feedback-cooperation-box" style="display: none;">
+                thanks for your cooperation
+            </div>
+        </div>
+    </div>
+
+    <!-- =====================================================
+         CONTACT US MODAL (moved out of "support")
+         ===================================================== -->
+    <div id="contactus-modal" class="modal-overlay">
+        <div class="modal-box plain-modal-box contact-container">
+            <button id="close-contactus-modal" class="back-btn">← Back</button>
+            <h2 class="about-main-title" style="margin-bottom:20px;">📞 Contact Us</h2>
+            <div class="chat-icon-wrap">
+                <svg viewBox="0 0 64 64" class="chat-icon-svg" xmlns="http://www.w3.org/2000/svg">
+                    <circle cx="32" cy="32" r="30" fill="#25D366"/>
+                    <path d="M20 44l2.4-8.2A14 14 0 1 1 32 46a13.9 13.9 0 0 1-6.6-1.7L20 46z" fill="#fff"/>
+                </svg>
+                <span class="chat-icon-label">Chat with us</span>
+            </div>
+            <a href="https://wa.me/201096170744" target="_blank" class="support-phone-row">01096170744</a>
+            <a href="https://wa.me/201227395613" target="_blank" class="support-phone-row">01227395613</a>
+        </div>
+    </div>
+
+    <!-- =====================================================
+         CURRENCY SELECTION MODAL (NEW)
+         ===================================================== -->
+    <div id="currency-modal" class="modal-overlay">
+        <div class="modal-box currency-modal-box">
+            <button id="close-currency-modal" class="back-btn">← Back</button>
+            <h2 class="currency-modal-title">💱 Choose Your Currency</h2>
+            <div class="currency-choices">
+                <button class="currency-choice-btn" data-currency="EGP">
+                    <span class="currency-flag">🇪🇬</span>
+                    <span class="currency-name">Egyptian Pound</span>
+                    <span class="currency-code">EGP</span>
+                </button>
+                <button class="currency-choice-btn" data-currency="USD">
+                    <span class="currency-flag">🇺🇸</span>
+                    <span class="currency-name">US Dollar</span>
+                    <span class="currency-code">USD</span>
+                </button>
+                <button class="currency-choice-btn" data-currency="TND">
+                    <span class="currency-flag">🇹🇳</span>
+                    <span class="currency-name">Tunisian Dinar</span>
+                    <span class="currency-code">TND</span>
+                </button>
+                <button class="currency-choice-btn" data-currency="SAR">
+                    <span class="currency-flag">🇸🇦</span>
+                    <span class="currency-name">Saudi Riyal</span>
+                    <span class="currency-code">SAR</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- =====================================================
+         LANGUAGE SELECTION MODAL (NEW)
+         ===================================================== -->
+    <div id="language-modal" class="modal-overlay">
+        <div class="modal-box language-modal-box">
+            <button id="close-language-modal" class="back-btn">← Back</button>
+            <h2 class="language-modal-title">🌐 <span data-i18n="chooseLanguage">Choose Your Language</span></h2>
+            <div class="language-choices">
+                <button class="language-choice-btn" data-lang="default">
+                    <span class="language-flag">🌍</span>
+                    <span class="language-name">Default Language</span>
+                    <span class="language-code">DEF</span>
+                </button>
+                <button class="language-choice-btn" data-lang="en">
+                    <span class="language-flag">🇬🇧</span>
+                    <span class="language-name">English Language</span>
+                    <span class="language-code">EN</span>
+                </button>
+                <button class="language-choice-btn" data-lang="ar">
+                    <span class="language-flag">🇸🇦</span>
+                    <span class="language-name">Arabic Language / العربية</span>
+                    <span class="language-code">AR</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- =====================================================
+         FREE FIRE TYPE SELECTION MODAL (Step 1 for FF)
+         ===================================================== -->
+    <div id="ff-type-modal" class="modal-overlay">
+        <div class="modal-box ff-type-box">
+            <button id="close-ff-type" class="back-btn">← Back</button>
+            <div class="game-header">
+                <img src="https://static.wikia.nocookie.net/garena-freefire/images/f/f2/Free_Fire_App_Icon.png/revision/latest/smart/width/250/height/250?cb=20240517153409"
+                     onerror="this.src='https://placehold.co/50x50/ff6600/white?text=FF'"
+                     alt="Free Fire" class="game-icon" style="border-color:#ff6600;">
+                <h2 style="color:#ff6600; font-size:1.4rem;">FREE FIRE</h2>
+            </div>
+            <p class="ff-type-subtitle">Choose your recharge method</p>
+            <div class="ff-type-choices">
+                <button class="ff-type-rect" id="ff-choose-id">
+                    <span class="ff-type-icon">🆔</span>
+                    <span class="ff-type-label">ID RECHARGE</span>
+                    <span class="ff-type-desc">شحن من خلال اي دي</span>
+                </button>
+                
+            </div>
+        </div>
+    </div>
+
+    <!-- =====================================================
+         PRODUCT SELECTION MODAL
+         ===================================================== -->
+    <div id="recharge-modal" class="modal-overlay">
+        <div class="modal-box recharge-box">
+            <div class="modal-nav-header">
+                <button id="back-to-id" class="back-btn">← Back</button>
+            </div>
+            <h3 class="recharge-title">SELECT A PRODUCT</h3>
+            <div class="recharge-list"></div>
+        </div>
+    </div>
+
+    <!-- =====================================================
+         CREDENTIALS MODAL
+         ===================================================== -->
+    <div id="credentials-modal" class="modal-overlay">
+        <div class="modal-box">
+            <button id="back-from-credentials" class="back-btn">← Back</button>
+            <div class="game-header">
+                <img src="https://placehold.co/50x50/orange/white?text=GAME" alt="Game Icon" class="game-icon" id="cred-modal-icon">
+                <h2 id="cred-modal-title" style="color:#ff6600; font-size:1.4rem;">FREE FIRE</h2>
+            </div>
+
+            <div id="id-credentials-section" style="display:none;">
+                <div class="input-section" id="id-input-section-box">
+                    <div class="input-header">
+                        <span class="user-icon">🆔</span>
+                        <p>ENTER YOUR GAME ID</p>
+                    </div>
+                    <input type="text" id="game-id-field" placeholder="اكتب الاي دي - enter your id" class="game-input">
+                    <button id="confirm-id-btn" class="confirm-btn" disabled>CONFIRM ORDER</button>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- =====================================================
+         CHECKOUT / BASKET MODAL
+         ===================================================== -->
+    <div id="checkout-modal" class="modal-overlay">
+        <div class="modal-box checkout-large-box">
+            <button id="back-to-recharge" class="back-btn">← Back</button>
+            <div class="input-section order-summary-section">
+                <div class="input-header summary-header">
+                    <span class="user-icon">📋</span>
+                    <p>ORDER SUMMARY</p>
+                </div>
+                <div id="basket-items-wrapper"></div>
+                <div class="basket-total-row">
+                    <span>TOTAL AMOUNT:</span>
+                    <span id="basket-total-price-sum">0 EGP</span>
+                </div>
+                <div id="success-notification" class="arabic-notice" style="display: none;">
+                    تم استلام رسالتك , و سيتم الشحن تلقاءيا خلال 20 دقيقه بعد استلام المبلغ علي 01096170744
+                </div>
+                <div id="checkout-action-container">
+                    <button id="checkout-btn" class="blue-btn">CONFIRM & COMPLETE CHECKOUT</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- =====================================================
+         SELL ACCOUNT PAGE (receipt style) - full page
+         ===================================================== -->
+    <div id="sell-page" class="sub-page" style="display:none;">
+        <div class="sub-page-inner">
+            <button type="button" id="close-sell-page" class="back-btn">← <span data-i18n="back">Back</span></button>
+            <div class="receipt-box">
+                <h2 class="receipt-title" data-i18n="sellTitle">Selling Accounts</h2>
+                <div class="receipt-cut"></div>
+
+                <div class="camera-box" id="camera-box">
+                    <input type="file" id="sell-photo-input" accept="image/*" multiple hidden>
+                    <button type="button" id="camera-add-btn" class="camera-add-btn" aria-label="Add photos">
+                        <svg viewBox="0 0 64 64" class="camera-svg" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                            <path d="M22 14l-3 6H10a4 4 0 0 0-4 4v26a4 4 0 0 0 4 4h44a4 4 0 0 0 4-4V24a4 4 0 0 0-4-4h-9l-3-6H22z" fill="none" stroke="currentColor" stroke-width="3" stroke-linejoin="round"/>
+                            <circle cx="32" cy="36" r="9" fill="none" stroke="currentColor" stroke-width="3"/>
+                            <circle cx="50" cy="28" r="1.8" fill="currentColor"/>
+                        </svg>
+                        <span class="camera-hint" data-i18n="addPhotos">Tap to add photos</span>
+                    </button>
+                    <div id="sell-thumbs" class="sell-thumbs"></div>
+                    <div class="camera-counter"><span id="sell-photo-count">0</span>/10</div>
+                </div>
+
+                <div class="receipt-fields">
+                    <label class="receipt-label" data-i18n="fPhone">Phone number</label>
+                    <input type="tel" id="sell-phone" class="game-input" maxlength="11" inputmode="numeric" autocomplete="off" data-i18n-placeholder="phPhone" placeholder="01xxxxxxxxx">
+
+                    <label class="receipt-label" data-i18n="fPrice">Account price (EGP)</label>
+                    <input type="number" id="sell-price" class="game-input" min="1" inputmode="decimal" data-i18n-placeholder="phPrice" placeholder="Price">
+
+                    <label class="receipt-label" data-i18n="fInfo">Account information</label>
+                    <textarea id="sell-info" class="game-input receipt-textarea" maxlength="1500" data-i18n-placeholder="phInfo" placeholder="Level, skins, rank, anything you want to say..."></textarea>
+
+                    <label class="receipt-label" data-i18n="fGame">Game name</label>
+                    <input type="text" id="sell-game" class="game-input" maxlength="40" autocomplete="off" data-i18n-placeholder="phGame" placeholder="Free Fire, PUBG...">
+                </div>
+
+                <div id="sell-error" class="profile-setup-error sell-error"></div>
+                <div class="receipt-cut"></div>
+                <button type="button" id="sell-save-btn" class="blue-btn" data-i18n="save">SAVE</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- =====================================================
+         ACCOUNT DETAILS MODAL
+         ===================================================== -->
+    <div id="account-modal" class="modal-overlay">
+        <div class="modal-box account-detail-box">
+            <button type="button" id="close-account-modal" class="back-btn">← <span data-i18n="back">Back</span></button>
+            <div class="acc-gallery">
+                <img id="acc-main-photo" class="acc-main-photo" alt="">
+                <button type="button" id="acc-prev" class="acc-nav acc-prev" aria-label="Previous">&#10094;</button>
+                <button type="button" id="acc-next" class="acc-nav acc-next" aria-label="Next">&#10095;</button>
+                <span id="acc-photo-counter" class="acc-photo-counter"></span>
+            </div>
+            <div id="acc-thumbs" class="acc-thumbs"></div>
+            <div class="acc-info-list">
+                <div class="acc-info-row"><span class="acc-info-key" data-i18n="fGame">Game name</span><span id="acc-game" class="acc-info-val"></span></div>
+                <div class="acc-info-row"><span class="acc-info-key" data-i18n="fPriceShort">Price</span><span id="acc-price" class="acc-info-val acc-price-val"></span></div>
+                <div class="acc-info-block"><span class="acc-info-key" data-i18n="fInfo">Account information</span><p id="acc-info" class="acc-info-text"></p></div>
+                <div class="acc-info-row"><span class="acc-info-key" data-i18n="fPhoneShort">Seller phone</span><a id="acc-phone" class="acc-phone-link" href="#" target="_blank" rel="noopener"></a></div>
+                <div class="acc-wa-hint" data-i18n="waHint">Tap the number to chat on WhatsApp</div>
+            </div>
+            <button type="button" id="acc-delete-btn" class="acc-delete-btn" style="display:none;" data-i18n="deleteAccount">🗑 Delete my account listing</button>
+        </div>
+    </div>
+
+    <script src="script.js?v=8"></script>
+    <script src="effects.js?v=7" defer></script>
+</body>
+</html>

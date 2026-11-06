@@ -1,0 +1,193 @@
+/* ==========================================================
+   SHETOS STORE - PREMIUM EFFECTS LAYER (loads after style.css)
+   Pure additions: nothing in style.css was changed.
+   ========================================================== */
+:root{--fx-ease:cubic-bezier(.22,1,.36,1);--fx-glare:rgba(255,255,255,.3);--fx-grid:rgba(255,255,255,.035)}
+html[data-theme="light"]{--fx-glare:rgba(255,255,255,.55);--fx-grid:rgba(0,0,0,.045)}
+
+/* ---------- global polish ---------- */
+::selection{background:#ff6600;color:#fff}
+*{scrollbar-width:thin;scrollbar-color:#ff6600 transparent}
+:focus-visible{outline:2px solid #00a2ff;outline-offset:3px;border-radius:8px}
+.app-bg-wallpaper::after{content:"";position:absolute;inset:0;background-image:linear-gradient(var(--fx-grid) 1px,transparent 1px),linear-gradient(90deg,var(--fx-grid) 1px,transparent 1px);background-size:44px 44px;-webkit-mask-image:radial-gradient(ellipse at 50% 30%,#000 20%,transparent 78%);mask-image:radial-gradient(ellipse at 50% 30%,#000 20%,transparent 78%)}
+.fx-cursor{position:fixed;left:0;top:0;width:460px;height:460px;margin:-230px 0 0 -230px;border-radius:50%;background:radial-gradient(circle,rgba(255,102,0,.16),transparent 65%);pointer-events:none;z-index:0;will-change:transform}
+.fx-progress{position:fixed;top:0;left:0;width:100%;height:3px;transform-origin:0 50%;transform:scaleX(var(--p,0));background:linear-gradient(90deg,#ff6600,#ffb067,#00a2ff);z-index:100001;pointer-events:none}
+html.fx-theme *{transition:background-color .45s,color .45s,border-color .45s,box-shadow .45s!important}
+
+/* ---------- intro splash ---------- */
+.intro-energy-sphere{position:absolute;width:min(62vmin,440px);aspect-ratio:1;border-radius:50%;background:radial-gradient(circle,rgba(255,102,0,.6),rgba(0,122,204,.28) 45%,transparent 70%);filter:blur(12px);animation:fxSphere 2.6s ease-in-out infinite}
+.brand-text{position:relative;z-index:1;background:linear-gradient(100deg,#fff 20%,#ff8a00 45%,#00a2ff 55%,#fff 80%);background-size:250% auto;-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;animation:introAnimation 1.5s var(--fx-ease) forwards,fxShimmer 3s linear infinite}
+@keyframes fxSphere{0%,100%{transform:scale(.85);opacity:.7}50%{transform:scale(1.12);opacity:1}}
+@keyframes fxShimmer{to{background-position:250% center}}
+
+/* ---------- top bar ---------- */
+.top-bar{box-shadow:0 10px 30px -20px rgba(0,0,0,.7)}
+.top-bar::after{content:"";position:absolute;left:0;right:0;bottom:-1px;height:2px;background:linear-gradient(90deg,transparent,#ff6600,#00a2ff,#ff6600,transparent);background-size:200% 100%;animation:fxLine 6s linear infinite;opacity:.85;pointer-events:none}
+@keyframes fxLine{to{background-position:200% 0}}
+.top-search-wrap{transition:border-color .25s,box-shadow .3s,transform .3s var(--fx-ease)}
+.top-search-wrap:focus-within{transform:scale(1.015);box-shadow:0 0 0 4px rgba(255,102,0,.14),0 0 22px rgba(255,102,0,.3)}
+.top-settings-icon-btn:hover,.theme-toggle-btn:hover{box-shadow:0 0 0 4px rgba(255,102,0,.15),0 0 20px rgba(255,102,0,.45)}
+.theme-toggle-btn:active,.top-settings-icon-btn:active{transform:scale(.9)}
+
+/* ---------- section titles ---------- */
+.selection-title{background:linear-gradient(90deg,var(--text-main) 0%,#ff8a00 50%,var(--text-main) 100%);background-size:200% auto;-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;animation:fxShimmer 7s linear infinite}
+.selection-title::after{content:"";display:block;width:64px;height:4px;margin:12px auto 0;border-radius:4px;background:linear-gradient(90deg,#ff6600,#00a2ff);box-shadow:0 0 14px rgba(255,102,0,.6);animation:fxGrow .9s var(--fx-ease) both}
+.recharge-list .selection-title::after{width:36px;height:3px;margin-top:6px}
+@keyframes fxGrow{from{width:0;opacity:0}}
+
+/* ---------- shared 3D tilt cards ---------- */
+.game-card,.hub-box,.account-card{--rx:0deg;--ry:0deg;--ty:0px;--sc:1;--rgb:255,102,0;
+  transform:perspective(900px) rotateX(var(--rx)) rotateY(var(--ry)) translateY(var(--ty)) scale(var(--sc));
+  transform-style:preserve-3d;will-change:transform;
+  transition:transform .5s var(--fx-ease),box-shadow .4s,border-color .4s;
+  animation:fxCardIn .75s var(--fx-ease) backwards;animation-delay:calc(var(--i,0)*80ms)}
+.game-card:hover,.hub-box:hover,.account-card:hover{--ty:-10px;--sc:1.03;
+  transform:perspective(900px) rotateX(var(--rx)) rotateY(var(--ry)) translateY(var(--ty)) scale(var(--sc));
+  box-shadow:0 22px 44px -14px rgba(var(--rgb),.7),0 0 0 1px rgba(var(--rgb),.5),0 0 32px -6px rgba(var(--rgb),.55)}
+.game-card:active,.hub-box:active,.account-card:active{--sc:.97;--ty:-2px}
+.game-card.is-tilting,.hub-box.is-tilting,.account-card.is-tilting{transition:transform .12s ease-out,box-shadow .4s,border-color .4s}
+@keyframes fxCardIn{from{opacity:0;transform:perspective(900px) translateY(46px) rotateX(14deg) scale(.88)}}
+
+/* per-game accent colours */
+.ff-card{--rgb:255,102,0}.pubg-card{--rgb:0,162,255}.cod-card{--rgb:229,193,88}
+.fifa-card{--rgb:0,255,204}.pes-card{--rgb:0,204,68}.bs-card{--rgb:255,51,51}
+.hub-box-accounts{--rgb:0,162,255}
+
+/* glare that follows the cursor + diagonal shine sweep */
+.game-card::after,.hub-box::after,.account-card::after{content:"";position:absolute;inset:0;z-index:4;pointer-events:none;opacity:0;transition:opacity .3s;
+  background:radial-gradient(circle at var(--mx,50%) var(--my,50%),var(--fx-glare),transparent 55%);mix-blend-mode:normal}
+.game-card:hover::after,.hub-box:hover::after,.account-card:hover::after{opacity:1}
+.game-card::before{content:"";position:absolute;top:-20%;left:-60%;width:40%;height:140%;z-index:4;pointer-events:none;
+  background:linear-gradient(100deg,transparent,rgba(255,255,255,.38),transparent);transform:skewX(-20deg)}
+.game-card:hover::before{animation:fxSweep .95s ease}
+@keyframes fxSweep{to{transform:skewX(-20deg) translateX(430%)}}
+
+/* inner details */
+.card-bg{transition:transform .9s var(--fx-ease),filter .5s}
+.game-card:hover .card-bg{transform:scale(1.13);filter:saturate(1.25) brightness(1.06)}
+.icon-badge{animation:fxFloat 4s ease-in-out infinite;transition:transform .35s var(--fx-ease),box-shadow .35s,border-color .35s}
+.game-card:nth-child(even) .icon-badge{animation-delay:-2s}
+@keyframes fxFloat{50%{translate:0 -4px}}
+.game-label{transition:letter-spacing .4s var(--fx-ease),padding .4s var(--fx-ease);text-shadow:0 2px 10px rgba(0,0,0,.7)}
+.game-label::after{content:"";display:block;height:3px;width:0;margin:6px auto 0;border-radius:3px;background:rgb(var(--rgb));box-shadow:0 0 12px rgb(var(--rgb));transition:width .45s var(--fx-ease)}
+.game-card:hover .game-label{letter-spacing:2px;padding-bottom:18px}
+.game-card:hover .game-label::after{width:44%}
+.game-grid{padding-top:20px}
+
+/* hub boxes */
+.hub-box{position:relative;overflow:hidden;border-color:rgb(var(--rgb))}
+.hub-box-icon{transition:transform .5s var(--fx-ease);animation:fxFloat 3.6s ease-in-out infinite;filter:drop-shadow(0 8px 14px rgba(var(--rgb),.45))}
+.hub-box:hover .hub-box-icon{transform:scale(1.2) rotate(-6deg)}
+.hub-box-title{transition:letter-spacing .4s var(--fx-ease),color .3s}
+.hub-box:hover .hub-box-title{letter-spacing:2.5px;color:rgb(var(--rgb))}
+
+/* account cards */
+.account-card{--rgb:255,102,0}
+.account-card-shade{transition:padding .35s var(--fx-ease)}
+.account-card:hover .account-card-shade{padding-bottom:16px}
+
+/* ---------- buttons ---------- */
+.blue-btn,.profile-setup-enter-btn,.profile-save-btn,.feedback-submit-button,.confirm-btn,.auth-tab,.auth-method{position:relative;overflow:hidden;isolation:isolate;transition:transform .3s var(--fx-ease),box-shadow .3s,filter .3s,background .3s,border-color .3s,color .3s}
+.blue-btn::after,.profile-setup-enter-btn::after,.profile-save-btn::after,.feedback-submit-button::after,.confirm-btn::after{content:"";position:absolute;top:0;left:-80%;width:50%;height:100%;background:linear-gradient(100deg,transparent,rgba(255,255,255,.4),transparent);transform:skewX(-20deg);pointer-events:none}
+.blue-btn:hover:not(:disabled)::after,.profile-setup-enter-btn.ready:hover::after,.profile-save-btn:hover::after,.feedback-submit-button:hover:not(:disabled)::after,.confirm-btn:hover:not(:disabled)::after{animation:fxSweep2 .85s ease}
+@keyframes fxSweep2{to{left:140%}}
+.blue-btn:hover:not(:disabled),.profile-save-btn:hover,.profile-setup-enter-btn.ready:hover{transform:translateY(-3px);box-shadow:0 12px 28px -6px rgba(0,122,204,.7)}
+.feedback-submit-button:hover:not(:disabled){box-shadow:0 12px 28px -6px rgba(255,87,34,.7);transform:translateY(-3px)}
+.confirm-btn:hover:not(:disabled){transform:translateY(-3px);filter:brightness(1.12);box-shadow:0 12px 28px -6px rgba(255,102,0,.65)}
+.blue-btn:active:not(:disabled),.profile-save-btn:active,.profile-setup-enter-btn.ready:active,.feedback-submit-button:active:not(:disabled),.confirm-btn:active:not(:disabled){transform:scale(.97)}
+.auth-tab:hover:not(.active),.auth-method:hover:not(.active){transform:translateY(-2px);border-color:#ff6600;color:var(--text-main)}
+.auth-tab:active,.auth-method:active{transform:scale(.96)}
+.profile-edit-toggle-btn,.profile-logout-btn{transition:all .3s var(--fx-ease)}
+.profile-edit-toggle-btn:hover,.profile-logout-btn:hover{transform:translateY(-2px)}
+.back-btn{transition:translate .3s var(--fx-ease),color .3s,text-shadow .3s}
+.back-btn:hover{translate:-5px 0;color:#ff8a00;text-shadow:0 0 12px rgba(255,102,0,.6)}
+body.lang-ar .back-btn:hover{translate:5px 0}
+.scroll-arrow-btn{transition:all .3s var(--fx-ease)}
+.scroll-arrow-btn:hover{box-shadow:0 0 22px rgba(255,102,0,.7)}
+.scroll-arrow-btn:active{transform:scale(.88)}
+
+/* list-style buttons */
+.setting-big-rect-btn,.ff-type-rect,.currency-choice-btn,.language-choice-btn{transition:all .35s var(--fx-ease)}
+.setting-btn-arrow{transition:translate .3s var(--fx-ease)}
+.setting-big-rect-btn:hover .setting-btn-arrow{translate:7px 0}
+body.lang-ar .setting-big-rect-btn:hover .setting-btn-arrow{translate:-7px 0}
+.setting-big-rect-btn:hover .setting-btn-icon,.ff-type-rect:hover .ff-type-icon{animation:fxWiggle .6s ease}
+@keyframes fxWiggle{25%{transform:rotate(-12deg) scale(1.15)}60%{transform:rotate(10deg) scale(1.15)}}
+.currency-flag,.language-flag{transition:transform .35s var(--fx-ease)}
+.currency-choice-btn:hover .currency-flag,.language-choice-btn:hover .language-flag{transform:scale(1.25) rotate(-8deg)}
+.support-phone-row:active{transform:scale(.96)}
+
+/* product rows: colour fill slides in, rows stagger in */
+.recharge-item{position:relative;overflow:hidden;animation:fxSlideIn .5s var(--fx-ease) backwards;animation-delay:calc(var(--i,0)*45ms);transition:transform .3s var(--fx-ease),box-shadow .3s,border-color .3s}
+.recharge-item>*{position:relative;z-index:1}
+.recharge-item::before{content:"";position:absolute;inset:0;background:linear-gradient(90deg,rgba(255,102,0,.32),rgba(255,102,0,.06));transform:scaleX(0);transform-origin:left;transition:transform .45s var(--fx-ease)}
+.recharge-item.membership::before{background:linear-gradient(90deg,rgba(255,204,0,.32),rgba(255,204,0,.06))}
+.recharge-item:hover{transform:translateX(6px) scale(1.01);box-shadow:0 8px 22px -10px rgba(255,102,0,.6)}
+.recharge-item:hover::before{transform:scaleX(1)}
+.recharge-item:hover .item-price{text-shadow:0 0 10px rgba(255,204,128,.8)}
+@keyframes fxSlideIn{from{opacity:0;transform:translateX(-26px)}}
+
+/* ---------- inputs ---------- */
+.game-input,.profile-setup-field,.profile-row-value-input,.feedback-input-rectangle{transition:border-color .25s,box-shadow .3s,transform .3s var(--fx-ease)}
+.game-input:focus,.profile-setup-field:focus,.profile-row-value-input:focus,.feedback-input-rectangle:focus{box-shadow:0 0 0 4px rgba(255,102,0,.15),0 0 20px rgba(255,102,0,.28)}
+
+/* ---------- modals ---------- */
+.modal-overlay{-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px)}
+.modal-overlay.active{animation:fxFade .28s ease}
+.modal-overlay.active .modal-box{animation:fxPop .45s var(--fx-ease)}
+.sub-page{animation:fxFade .3s ease}
+.done-status-block{animation:fxPop .5s var(--fx-ease)}
+@keyframes fxFade{from{opacity:0}}
+@keyframes fxPop{from{opacity:0;transform:translateY(26px) scale(.94)}}
+@keyframes fxSheet{from{transform:translateY(100%)}}
+@media (max-width:480px){.modal-overlay.active .modal-box{animation-name:fxSheet}}
+
+/* ---------- ripple ---------- */
+.fx-ripple{position:absolute;border-radius:50%;pointer-events:none;background:rgba(255,255,255,.38);transform:scale(0);animation:fxRipple .65s ease-out forwards;z-index:5}
+@keyframes fxRipple{to{transform:scale(1);opacity:0}}
+
+/* ---------- accessibility ---------- */
+@media (prefers-reduced-motion:reduce){
+  .game-card,.hub-box,.account-card,.recharge-item,.icon-badge,.hub-box-icon,.top-bar::after,.selection-title,.brand-text,.intro-energy-sphere{animation:none!important}
+  .game-card,.hub-box,.account-card{transform:none!important}
+  .fx-cursor{display:none}
+}
+@media (hover:none){.fx-cursor{display:none}.game-card:hover,.hub-box:hover,.account-card:hover{--ty:0px;--sc:1}}
+
+/* ---------- mobile scroll fix (selling accounts / sell page) ---------- */
+html,body{overflow-y:auto}
+.sub-page{height:100vh;height:100dvh;overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch;overscroll-behavior:contain;touch-action:pan-y;animation:none}
+.sub-page *{touch-action:pan-y}
+.sub-page input,.sub-page textarea{touch-action:manipulation}
+.sub-page-inner{padding-bottom:calc(120px + env(safe-area-inset-bottom,0px))}
+.accounts-section{touch-action:auto}
+/* ---------- v4: phone-safe layout for the accounts list ---------- */
+/* one single page scroller (html). body must not be a second scroll box (iOS / Android WebView bug) */
+body{overflow:visible!important}
+html{overflow-x:hidden;overflow-y:auto}
+/* card height without aspect-ratio (older Safari / WebViews collapse it and cards stack on top of each other) */
+.accounts-grid{display:grid;grid-auto-rows:auto;align-items:start}
+.account-card{aspect-ratio:auto;height:auto;min-height:0;display:block;contain:none}
+.account-card::before{content:"";display:block;width:100%;padding-top:125%}
+.account-card-shade{position:absolute;inset:0}
+/* touch phones: no 3D / will-change on cards (they can freeze swipe scrolling) */
+@media (hover:none),(pointer:coarse){
+  .game-card,.hub-box,.account-card{transform:none!important;transform-style:flat;will-change:auto}
+  .accounts-section{touch-action:auto}
+}
+
+/* ---------- v5: selling accounts = horizontal card strip (like the games) ---------- */
+.accounts-section{max-width:1300px}
+.accounts-strip{margin-bottom:10px}
+.accounts-grid{display:flex!important;flex-direction:row;flex-wrap:nowrap;align-items:flex-start;gap:var(--card-gap,16px);
+  overflow-x:auto;overflow-y:visible;width:100%;padding:20px var(--page-pad,12px) 26px;
+  scroll-snap-type:x proximity;scroll-padding-inline:var(--page-pad,12px);scroll-behavior:smooth;
+  -webkit-overflow-scrolling:touch;overscroll-behavior-x:contain;cursor:grab;user-select:none}
+.accounts-grid.is-dragging{cursor:grabbing;scroll-behavior:auto;scroll-snap-type:none}
+.accounts-grid::-webkit-scrollbar{height:8px}
+.accounts-grid::-webkit-scrollbar-track{background:var(--bg-surface-alt);border-radius:10px}
+.accounts-grid::-webkit-scrollbar-thumb{background:#ff6600;border-radius:10px}
+.accounts-grid .account-card{flex:0 0 auto;width:var(--card-w,clamp(140px,42vw,220px));scroll-snap-align:start}
+@media (hover:hover) and (pointer:fine){.game-grid-wrapper.accounts-strip .scroll-arrow-btn{display:flex!important}}
+/* v6: accounts row must allow horizontal swipes on every device */
+.accounts-grid,.accounts-grid .account-card{touch-action:pan-x pan-y!important}
