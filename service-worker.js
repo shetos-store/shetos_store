@@ -8,7 +8,7 @@ const CORE_ASSETS = [
     './glass.css?v=1',
     './script.js?v=12',
     './admin.js?v=1',
-    './admin.css?v=1',
+    './admin.css?v=2',
     './effects.js?v=8',
     './manifest.json',
     './icon.svg',

@@ -1,5 +1,5 @@
 /* SHETOS STORE - ADMIN LAYER (dashboard + password prompt). Loads last. */
-.adm-overlay{position:fixed;inset:0;z-index:10000;display:grid;place-items:center;padding:16px;background:rgba(8,8,14,.55);-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px)}
+.adm-overlay{position:fixed;inset:0;z-index:2000000;display:grid;place-items:center;padding:16px;background:rgba(8,8,14,.55);-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px)}
 .adm-gate{width:min(380px,100%);display:grid;gap:12px;padding:26px 22px;border-radius:24px;color:var(--text-main,#fff);background:var(--glass-bg-strong,rgba(24,24,32,.9));border:1px solid var(--glass-border,rgba(255,255,255,.18));box-shadow:inset 1px 1px 0 var(--glass-edge,rgba(255,255,255,.4)),0 30px 70px -20px rgba(0,0,0,.7)}
 .adm-gate h3{margin:0;font:700 1.3rem 'Space Grotesk',sans-serif}
 .adm-gate p{margin:0;color:var(--text-muted,#aaa);font-size:.92rem;line-height:1.5}
@@ -15,9 +15,9 @@ textarea.adm-input{resize:vertical}
 .adm-btn.danger{background:linear-gradient(135deg,#ff5a5a,#c62828)}
 .adm-btn.sm{padding:6px 12px;font-size:.82rem;border-radius:10px}
 
-.adm-fab{position:fixed;inset-inline-start:16px;bottom:calc(16px + env(safe-area-inset-bottom,0px));z-index:450;padding:12px 18px;border-radius:99px;font:600 .9rem 'Inter',sans-serif;cursor:pointer;color:var(--text-main,#fff);background:var(--glass-bg-strong,rgba(24,24,32,.8));border:1px solid var(--glass-border,rgba(255,255,255,.2));-webkit-backdrop-filter:blur(18px);backdrop-filter:blur(18px);box-shadow:inset 1px 1px 0 var(--glass-edge,rgba(255,255,255,.4)),0 10px 26px -10px rgba(255,102,0,.7)}
+.adm-fab{position:fixed;inset-inline-start:16px;bottom:calc(16px + env(safe-area-inset-bottom,0px));z-index:1400000;padding:12px 18px;border-radius:99px;font:600 .9rem 'Inter',sans-serif;cursor:pointer;color:var(--text-main,#fff);background:var(--glass-bg-strong,rgba(24,24,32,.8));border:1px solid var(--glass-border,rgba(255,255,255,.2));-webkit-backdrop-filter:blur(18px);backdrop-filter:blur(18px);box-shadow:inset 1px 1px 0 var(--glass-edge,rgba(255,255,255,.4)),0 10px 26px -10px rgba(255,102,0,.7)}
 
-.adm-dash{position:fixed;inset:0;z-index:9999;display:flex;flex-direction:column;color:var(--text-main,#fff);background:rgba(8,8,14,.78);-webkit-backdrop-filter:blur(26px) saturate(1.5);backdrop-filter:blur(26px) saturate(1.5);padding:env(safe-area-inset-top,0px) 0 env(safe-area-inset-bottom,0px)}
+.adm-dash{position:fixed;inset:0;z-index:1500000;display:flex;flex-direction:column;color:var(--text-main,#fff);background:rgba(8,8,14,.78);-webkit-backdrop-filter:blur(26px) saturate(1.5);backdrop-filter:blur(26px) saturate(1.5);padding:env(safe-area-inset-top,0px) 0 env(safe-area-inset-bottom,0px)}
 html[data-theme="light"] .adm-dash{background:rgba(240,243,252,.88)}
 .adm-head{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;padding:14px 16px;border-bottom:1px solid var(--glass-border,rgba(255,255,255,.18))}
 .adm-head b{font:700 1.15rem 'Space Grotesk',sans-serif}
