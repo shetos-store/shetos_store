@@ -224,7 +224,7 @@ document.addEventListener('DOMContentLoaded', () => {
             loginAccount: "LOGIN ACCOUNT",
             loginDesc: "شحن من خلال الحساب",
             basketEmpty: "Your basket is empty! Add products first.",
-            successMsg: "تم استلام رسالتك , و سيتم الشحن تلقاءيا خلال 20 دقيقه بعد استلام المبلغ المختار 01096170744",
+            successMsg: "تم استلام رسالتك , و سيتم الشحن تلقاءيا خلال 20 دقيقه بعد استلام المبلغ المختار 01227395613",
         },
         en: {
             navHome: "Home",
@@ -264,7 +264,7 @@ document.addEventListener('DOMContentLoaded', () => {
             loginAccount: "LOGIN ACCOUNT",
             loginDesc: "Recharge via account login",
             basketEmpty: "Your basket is empty! Please add products first.",
-            successMsg: "Your order has been received. Recharge will be processed within 20 minutes after payment. Contact: 01096170744",
+            successMsg: "Your order has been received. Recharge will be processed within 20 minutes after payment. Contact: 01227395613",
         },
         ar: {
             navHome: "الرئيسية",
@@ -304,7 +304,7 @@ document.addEventListener('DOMContentLoaded', () => {
             loginAccount: "تسجيل الدخول",
             loginDesc: "شحن من خلال الحساب",
             basketEmpty: "سلتك فارغة! أضف منتجات أولاً.",
-            successMsg: "تم استلام رسالتك , و سيتم الشحن تلقاءيا خلال 20 دقيقه بعد استلام المبلغ المختار 01096170744",
+            successMsg: "تم استلام رسالتك , و سيتم الشحن تلقاءيا خلال 20 دقيقه بعد استلام المبلغ المختار 01227395613",
         }
     };
 
@@ -1603,12 +1603,12 @@ document.addEventListener('DOMContentLoaded', () => {
             phName: "Enter your name", phPhone: "Phone number (01xxxxxxxxx)", phEmail: "Email",
             btnLogin: "Login", btnSignup: "Sign up", checking: "Checking...",
             errName: "Please enter your name.",
-            errPhoneFmt: "Sorry, this is a wrong phone number.",
+            errPhoneFmt: "Phone must start with 01 and be exactly 11 digits.",
             errNotWA: "Sorry, this is a wrong phone number (it is not on WhatsApp).",
-            errEmail: "Sorry, this is not an email.",
+            errEmail: "Enter a valid email that contains @ (example: name@mail.com).",
             errExists: "Sorry, but this account is already logged in. Sign up with another one.",
             errNoAccount: "No account found with this data. Please sign up first.",
-            errWrong: "Wrong name or phone/email. Please try again.",
+            errWrong: "Wrong name for this phone/email. Please try again.",
             errNet: "Connection problem. Please try again.",
             welcomeBack: "Welcome back", welcomeNew: "Welcome", loggedOut: "You have been logged out",
             nameSaved: "✔ Name saved", nameEmpty: "Name cannot be empty"
@@ -1620,9 +1620,9 @@ document.addEventListener('DOMContentLoaded', () => {
             phName: "اكتب اسمك", phPhone: "رقم الهاتف (01xxxxxxxxx)", phEmail: "الإيميل",
             btnLogin: "دخول", btnSignup: "إنشاء حساب", checking: "جاري التحقق...",
             errName: "من فضلك اكتب اسمك.",
-            errPhoneFmt: "عذرًا، رقم الهاتف غير صحيح.",
+            errPhoneFmt: "يجب أن يبدأ الرقم بـ 01 ويتكون من 11 رقمًا.",
             errNotWA: "عذرًا، رقم الهاتف غير صحيح (غير موجود على واتساب).",
-            errEmail: "عذرًا، هذا ليس إيميلًا.",
+            errEmail: "اكتب إيميلًا صحيحًا يحتوي على @ (مثال: name@mail.com).",
             errExists: "عذرًا، هذا الحساب مسجّل دخول بالفعل. سجّل بحساب آخر.",
             errNoAccount: "لا يوجد حساب بهذه البيانات. أنشئ حسابًا أولًا.",
             errWrong: "الاسم أو الهاتف/الإيميل غير صحيح. حاول مرة أخرى.",
@@ -1641,8 +1641,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const AUTH_PHONE_REGEX = /^01[0-9]{9}$/;
     const normName  = (s) => s.trim().replace(/\s+/g, ' ').toLowerCase();
     function isValidEmail(e) {
-        // must contain exactly one "@" with text before and after it, and no spaces
-        return /^[^\s@]+@[^\s@]+$/.test(e);
+        // must contain one "@" with text before it, and a domain with a dot after it, no spaces
+        return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e);
     }
     const hexOf = (str) => Array.from(new TextEncoder().encode(str)).map(b => b.toString(16).padStart(2, '0')).join('');
     const keyForPhone = (phone) => 'p_' + phone;
@@ -1787,7 +1787,7 @@ document.addEventListener('DOMContentLoaded', () => {
         authBusy = true; authSubmit.disabled = true; authSubmit.textContent = at('checking');
         showAuthError('');
         try {
-            // 2) one login: existing account -> name must match, new account -> created automatically
+            // 2) one login, no code: existing account -> name must match, new account -> created automatically
             const key = authMethod === 'phone' ? keyForPhone(phone) : keyForEmail(email.toLowerCase());
             const existing = await userGet(key);
             if (existing && normName(existing.name || '') !== normName(name)) return showAuthError(at('errWrong'));

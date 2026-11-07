@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, interactive-widget=resizes-content">
     <meta name="theme-color" content="#0a0a0a">
-    <meta name="color-scheme" content="dark light">
+    <meta name="color-scheme" content="dark">
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -17,6 +17,7 @@
     <link rel="stylesheet" href="style.css?v=6">
     <link rel="stylesheet" href="effects.css?v=7">
     <link rel="stylesheet" href="glass.css?v=1">
+    <link rel="stylesheet" href="pro.css?v=2">
     <script>
         /* Applied before first paint so there's no light/dark flash on load */
         (function () {
@@ -49,7 +50,6 @@
                 <button type="button" id="auth-method-phone" class="auth-method active">📱 Name + Phone</button>
                 <button type="button" id="auth-method-email" class="auth-method">✉️ Name + Email</button>
             </div>
-
             <input type="text" id="auth-name" class="profile-setup-field" placeholder="Enter your name" maxlength="30" autocomplete="off">
             <input type="tel" id="auth-phone" class="profile-setup-field" placeholder="Phone number (01xxxxxxxxx)" maxlength="11" autocomplete="off" inputmode="numeric">
             <input type="text" id="auth-email" class="profile-setup-field" placeholder="Email" maxlength="80" autocomplete="off" inputmode="email" autocapitalize="off" style="display:none;">
@@ -71,6 +71,7 @@
     <section id="store-page" class="page active">
 
         <div class="top-bar">
+            <a class="top-brand" href="./index.html" aria-label="Shetos Store"><img src="icon.svg" alt=""><b>SHETOS STORE</b></a>
             <div class="top-search-wrap">
                 <span class="top-search-icon">🔍</span>
                 <input type="text" id="top-search-input" class="top-search-rect" placeholder="Search a game...">
@@ -84,6 +85,21 @@
 
         <!-- ===== HUB: 2 large boxes (shown right after the intro animation) ===== -->
         <div id="hub-section" class="store-container hub-section">
+            <div class="pro-hero">
+                <span class="pro-pill"><i class="pro-dot"></i><span data-en="Fast &amp; trusted game top-ups" data-ar="شحن ألعاب سريع وموثوق">Fast &amp; trusted game top-ups</span></span>
+                <h1 class="pro-h1" data-en="Top up your game in minutes" data-ar="اشحن لعبتك في دقائق">Top up your game in minutes</h1>
+                <p class="pro-sub" data-en="Pick your game, enter your ID, and your recharge arrives automatically. No password needed." data-ar="اختر لعبتك وادخل الاي دي وسيصلك الشحن تلقائيا. لا نطلب كلمة سر.">Pick your game, enter your ID, and your recharge arrives automatically. No password needed.</p>
+                <div class="pro-cta">
+                    <button type="button" class="pro-btn" data-go="hub-games-box"><span data-en="Recharge a game" data-ar="اشحن لعبة">Recharge a game</span></button>
+                    <button type="button" class="pro-btn alt" data-go="hub-accounts-box"><span data-en="Buy or sell accounts" data-ar="بيع وشراء الحسابات">Buy or sell accounts</span></button>
+                </div>
+                <div class="pro-stats">
+                    <div class="pro-stat"><strong data-count="20">0</strong><span data-en="Minutes to deliver" data-ar="دقيقة للتسليم">Minutes to deliver</span></div>
+                    <div class="pro-stat"><strong data-count="6">0</strong><span data-en="Games supported" data-ar="ألعاب مدعومة">Games supported</span></div>
+                    <div class="pro-stat"><strong data-count="2">0</strong><span data-en="WhatsApp support lines" data-ar="خطوط دعم واتساب">WhatsApp support lines</span></div>
+                </div>
+                <div class="pro-marquee" aria-hidden="true"><div class="pro-track"><span class="pro-chip">Free Fire</span><span class="pro-chip">PUBG Mobile</span><span class="pro-chip">Call of Duty</span><span class="pro-chip">FIFA Mobile</span><span class="pro-chip">PES Mobile</span><span class="pro-chip">Blood Strike</span></div></div>
+            </div>
             <h2 class="selection-title" data-i18n="hubTitle">WHAT DO YOU NEED?</h2>
             <div class="hub-grid">
                 <button type="button" id="hub-games-box" class="hub-box hub-box-games">
@@ -97,6 +113,15 @@
                     <span class="hub-box-sub" data-i18n="hubAccountsSub">Buy &amp; sell game accounts</span>
                 </button>
             </div>
+
+            <section class="pro-sec"><h3 class="reveal" data-en="How it works" data-ar="كيف يعمل">How it works</h3>
+                <p class="reveal" data-en="Four steps from tap to delivery." data-ar="أربع خطوات من الطلب إلى التسليم.">Four steps from tap to delivery.</p>
+                <div class="pro-steps"><div class="pro-step reveal"><h4 data-en="Choose your game" data-ar="اختر لعبتك">Choose your game</h4><p data-en="Open Games Charge and tap the game you play." data-ar="افتح شحن الألعاب واختر لعبتك.">Open Games Charge and tap the game you play.</p></div><div class="pro-step reveal"><h4 data-en="Enter your ID" data-ar="ادخل الاي دي">Enter your ID</h4><p data-en="Select a product and type your game ID. We never ask for a password." data-ar="اختر المنتج واكتب الاي دي. لا نطلب كلمة سر أبدا.">Select a product and type your game ID. We never ask for a password.</p></div><div class="pro-step reveal"><h4 data-en="Send the payment" data-ar="حوّل المبلغ">Send the payment</h4><p data-en="Confirm the order, then transfer the amount to 01227395613." data-ar="أكد الطلب ثم حوّل المبلغ إلى 01227395613.">Confirm the order, then transfer the amount to 01227395613.</p></div><div class="pro-step reveal"><h4 data-en="Get your recharge" data-ar="استلم الشحن">Get your recharge</h4><p data-en="Your recharge is delivered automatically within 20 minutes of receiving payment." data-ar="يتم الشحن تلقائيا خلال 20 دقيقة من استلام المبلغ.">Your recharge is delivered automatically within 20 minutes of receiving payment.</p></div></div></section>
+            <section class="pro-sec"><h3 class="reveal" data-en="Questions, answered" data-ar="أسئلة شائعة">Questions, answered</h3>
+                <div class="pro-faq"><details class="reveal"><summary data-en="How long does a recharge take?" data-ar="كم يستغرق الشحن؟">How long does a recharge take?</summary><div class="ans" data-en="Within 20 minutes after we receive your payment." data-ar="خلال 20 دقيقة بعد استلام المبلغ.">Within 20 minutes after we receive your payment.</div></details><details class="reveal"><summary data-en="Do you need my password?" data-ar="هل تحتاجون كلمة السر؟">Do you need my password?</summary><div class="ans" data-en="No. Only your game ID is required." data-ar="لا. نحتاج الاي دي فقط.">No. Only your game ID is required.</div></details><details class="reveal"><summary data-en="Which games do you support?" data-ar="ما الألعاب المتاحة؟">Which games do you support?</summary><div class="ans" data-en="Free Fire, PUBG Mobile, Call of Duty, FIFA Mobile, PES Mobile and Blood Strike." data-ar="فري فاير وببجي وكول أوف ديوتي وفيفا وبيس وبلود سترايك.">Free Fire, PUBG Mobile, Call of Duty, FIFA Mobile, PES Mobile and Blood Strike.</div></details><details class="reveal"><summary data-en="Can I sell my game account?" data-ar="هل أستطيع بيع حسابي؟">Can I sell my game account?</summary><div class="ans" data-en="Yes. Open Selling Accounts, add photos and your price, and buyers contact you on WhatsApp." data-ar="نعم. افتح بيع الحسابات وأضف الصور والسعر وسيتواصل معك المشترون على واتساب.">Yes. Open Selling Accounts, add photos and your price, and buyers contact you on WhatsApp.</div></details></div></section>
+            <footer class="pro-footer reveal"><span>© 2026 Shetos Store</span>
+                <span data-en="Need help?" data-ar="تحتاج مساعدة؟">Need help?</span>
+                <a href="https://wa.me/201227395613" target="_blank" rel="noopener">WhatsApp 01227395613</a></footer>
         </div>
 
         <!-- ===== ACCOUNTS MARKET (list of accounts for sale) ===== -->
@@ -264,7 +289,6 @@
                 </svg>
                 <span class="chat-icon-label">Chat with us</span>
             </div>
-            <a href="https://wa.me/201096170744" target="_blank" class="support-phone-row">01096170744</a>
             <a href="https://wa.me/201227395613" target="_blank" class="support-phone-row">01227395613</a>
         </div>
     </div>
@@ -407,7 +431,7 @@
                     <span id="basket-total-price-sum">0 EGP</span>
                 </div>
                 <div id="success-notification" class="arabic-notice" style="display: none;">
-                    تم استلام رسالتك , و سيتم الشحن تلقاءيا خلال 20 دقيقه بعد استلام المبلغ علي 01096170744
+                    تم استلام رسالتك , و سيتم الشحن تلقاءيا خلال 20 دقيقه بعد استلام المبلغ علي 01227395613
                 </div>
                 <div id="checkout-action-container">
                     <button id="checkout-btn" class="blue-btn">CONFIRM & COMPLETE CHECKOUT</button>
@@ -485,7 +509,9 @@
         </div>
     </div>
 
-    <script src="script.js?v=10"></script>
-    <script src="effects.js?v=8" defer></script>
+    <script src="script.js?v=11"></script>
+    <script src="effects.js?v=7" defer></script>
+    <script src="pro.js?v=2" defer></script>
+    <button type="button" id="pro-top" class="pro-top" aria-label="Back to top">&#8593;</button>
 </body>
 </html>
