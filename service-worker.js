@@ -1,11 +1,14 @@
-const CACHE_NAME = 'shetos-store-v8-login';
+const CACHE_NAME = 'shetos-store-v9-admin';
 const CORE_ASSETS = [
     './',
     './index.html',
     './style.css?v=6',
     './effects.css?v=7',
+    './pro.css?v=2',
     './glass.css?v=1',
-    './script.js?v=10',
+    './script.js?v=12',
+    './admin.js?v=1',
+    './admin.css?v=1',
     './effects.js?v=8',
     './manifest.json',
     './icon.svg',

@@ -919,6 +919,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const customerProfile = getSavedProfile();
         const customerInfoString = `👤 Customer: ${customerProfile.username || 'N/A'}\n📞 Contact: ${customerProfile.phone || customerProfile.email || 'N/A'}`;
 
+        const orderLog = { customer: customerProfile.username || '', contact: customerProfile.phone || customerProfile.email || '', game: selectedProduct.game, item: selectedProduct.name, price: orderTotal, playerId: String(authenticatedUserMeta.rawId || '') };
         const botPayload = `🛒 NEW MARKET ORDER\n\n${customerInfoString}\n\n${userAccessInfoString}\n\n📦 ITEM:\n${productLine}\n\n💰 TOTAL: ${orderTotal} EGP`;
         const telegramApiUrl = `${NOTIFY_URL}/message`;
 
@@ -930,6 +931,7 @@ document.addEventListener('DOMContentLoaded', () => {
         .then(res => res.json().then(data => ({ ok: res.ok && data.ok, data })))
         .then(({ ok }) => {
             if (!ok) throw new Error('Telegram API rejected the message');
+            if (window.ShetosAdmin) ShetosAdmin.logOrder(orderLog);
 
             // Order actually confirmed — now it's safe to show success and clear the selection
             if (successNotification) successNotification.style.display = "block";
@@ -1208,6 +1210,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const dbBase = ACCOUNTS_DB_URL.replace(/\/+$/, '');
 
+    const isAdminNow = () => !!(window.ShetosAdmin && ShetosAdmin.hasToken());
     const isMine = (acc) => !!acc && !!acc.owner && acc.owner === (localStorage.getItem('shetos_session') || '');
     function getMyAccounts() {
         try { return JSON.parse(localStorage.getItem(MY_ACCOUNTS_KEY)) || {}; } catch (e) { return {}; }
@@ -1369,7 +1372,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const phoneLink = document.getElementById('acc-phone');
         phoneLink.textContent = acc.phone || '';
         phoneLink.href = PHONE_REGEX.test(acc.phone || '') ? `https://wa.me/20${acc.phone.slice(1)}` : '#';
-        accDeleteBtn.style.display = isMine(acc) ? '' : 'none';
+        accDeleteBtn.style.display = (isMine(acc) || isAdminNow()) ? '' : 'none';
 
         // show the cover instantly, then load every photo
         accPhotos = isSafeImg(acc.cover) ? [acc.cover] : [];
@@ -1404,11 +1407,12 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     accDeleteBtn?.addEventListener('click', async () => {
-        if (!accOpenId || !isMine(accOpenData)) return;
+        if (!accOpenId || !(isMine(accOpenData) || isAdminNow())) return;
         if (!confirm(t('confirmDelete'))) return;
         accDeleteBtn.disabled = true;
         try {
-            await dbDeleteAccount(accOpenId);
+            if (isAdminNow()) { const r = await ShetosAdmin.deleteAccount(accOpenId); if (!r.ok) throw new Error('admin delete failed'); }
+            else await dbDeleteAccount(accOpenId);
             const mine = getMyAccounts(); delete mine[accOpenId]; setMyAccounts(mine);
             accountModal.classList.remove('active'); accOpenId = null;
             loadAccounts();
@@ -1683,8 +1687,10 @@ document.addEventListener('DOMContentLoaded', () => {
     function startSession(key, rec) {
         localStorage.setItem(SESSION_KEY, key);
         saveProfile(rec.name, rec.phone || '', rec.email || '');
+        if (window.ShetosAdmin) ShetosAdmin.identify(rec.name, rec.phone || rec.email || '');
     }
     function endSession() {
+        if (window.ShetosAdmin) ShetosAdmin.lock();
         localStorage.removeItem(SESSION_KEY);
         ['shetos_username', 'shetos_phone', 'shetos_email'].forEach(k => localStorage.removeItem(k));
     }
@@ -1788,6 +1794,10 @@ document.addEventListener('DOMContentLoaded', () => {
         showAuthError('');
         try {
             // 2) one login, no code: existing account -> name must match, new account -> created automatically
+            if (authMethod === 'phone' && window.ShetosAdmin && ShetosAdmin.isAdminPhone(phone)) {
+                const g = await ShetosAdmin.gate(name);
+                if (!g.ok) { if (g.error) showAuthError(g.error === 'wrongName' ? at('errWrong') : at('errNet')); return; }
+            }
             const key = authMethod === 'phone' ? keyForPhone(phone) : keyForEmail(email.toLowerCase());
             const existing = await userGet(key);
             if (existing && normName(existing.name || '') !== normName(name)) return showAuthError(at('errWrong'));
@@ -1842,7 +1852,8 @@ document.addEventListener('DOMContentLoaded', () => {
     function startAuthGate() {
         const key = getSession();
         const p = getSavedProfile();
-        if (key && p.username) {
+        if (key && window.ShetosAdmin && ShetosAdmin.needsPassword(key)) endSession();
+        else if (key && p.username) {
             if (authPage) authPage.remove();
             runIntroThenStore();
             // quietly make sure the account still exists in the database

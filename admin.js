@@ -2,7 +2,7 @@
    No password is stored here: it is checked by the admin Worker (admin-worker.js). */
 (function () {
   'use strict';
-  var API = 'https://shetos-admin.YOURNAME.workers.dev';   // <- your admin Worker URL
+  var API = 'https://shetos-admin.adam-abdelqawy.workers.dev';   // <- your admin Worker URL
   var ADMIN_PHONE = '01227395613', ADMIN_NAME = 'adam sameh', ADMIN_KEY = 'p_' + ADMIN_PHONE;
   var TK = 'shetos_admin_tok';
 
